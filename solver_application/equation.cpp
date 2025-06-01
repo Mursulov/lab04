@@ -14,12 +14,16 @@ int main()
     float x1 = 0;
     float x2 = 0;
 
+
     try
     {
         solve(a, b, c, x1, x2);
 
-        formatter(std::cout, "x1 = " + std::to_string(x1));
-        formatter(std::cout, "x2 = " + std::to_string(x2));
+        std::ostringstream oss1, oss2;
+        oss1 << std::fixed << std::setprecision(5) << x1;
+        oss2 << std::fixed << std::setprecision(5) << x2;
+        formatter(std::cout, "x1 = " + oss1.str());
+        formatter(std::cout, "x2 = " + oss2.str());
     }
     catch (const std::logic_error& ex)
     {
