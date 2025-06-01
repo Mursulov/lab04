@@ -76,12 +76,22 @@ jobs:
       shell: cmd
       run: cmake --build . --config %BUILD_TYPE% -- /p:Platform=x64
 
+    - name: List build output
+      working-directory: ./build
+      shell: cmd
+      run: dir /s
+
     - name: Run Hello World Test
       working-directory: ./build
       shell: pwsh
       run: |
-        $exe = ".\hello_world_application\${env:BUILD_TYPE}\hello_world.exe"
+        $exe = ".\hello_world_application\Release\hello_world.exe"
+        if (!(Test-Path $exe)) {
+          Write-Host "File not found: $exe"
+          exit 1
+        }
         $output = & $exe
+        Write-Host "Program output: $output"
         if ($output -notmatch "hello, world!") { Write-Host "Hello World test failed"; exit 1 }
         Write-Host "Hello World test passed!"
 
@@ -90,9 +100,13 @@ jobs:
       shell: pwsh
       run: |
         Write-Host "Testing equation solver:"
-        $exe = ".\solver_application\${env:BUILD_TYPE}\solver.exe"
+        $exe = ".\solver_application\Release\solver.exe"
+        if (!(Test-Path $exe)) {
+          Write-Host "File not found: $exe"
+          exit 1
+        }
         $output = echo "1 0 -25" | & $exe
-        Write-Host $output
+        Write-Host "Program output: $output"
         if ($output -notmatch "x1 = -5.00000") { Write-Host "x1 test failed"; exit 1 }
         if ($output -notmatch "x2 = 5.00000") { Write-Host "x2 test failed"; exit 1 }
         Write-Host "Solver test passed!"
