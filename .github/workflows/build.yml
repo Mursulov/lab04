@@ -83,6 +83,8 @@ jobs:
         shell: cmd
         run: |
           echo Testing equation solver:
+          .\solver_application\Release\solver.exe
+          echo 1 0 -25 | .\solver_application\Release\solver.exe
           set OUTPUT=
           for /f "delims=" %%i in ('echo 1 0 -25 ^| .\solver_application\Release\solver.exe') do set OUTPUT=%%i
           echo %OUTPUT%
