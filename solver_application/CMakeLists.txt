@@ -14,3 +14,6 @@ endif()
 
 add_executable(solver equation.cpp)
 target_link_libraries(solver PRIVATE formatter_ex solver_lib)
+target_include_directories(solver PRIVATE
+    ${CMAKE_SOURCE_DIR}/solver_lib
+)
