@@ -63,7 +63,7 @@ jobs:
         run: cmake .. -A x64 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
       - name: Build
         working-directory: ./build
-        run: cmake --build . --config %BUILD_TYPE%
+        run: cmake --build . --config %BUILD_TYPE% -- /p:Platform=x64
       - name: Run Hello World Test
         working-directory: ./build
         run: |
