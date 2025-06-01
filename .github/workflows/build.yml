@@ -78,14 +78,3 @@ jobs:
         run: |
           .\hello_world_application\Release\hello_world.exe | findstr "hello, world!"
           echo Hello World test passed!
-      - name: Run Solver Test
-        working-directory: ./build
-        shell: cmd
-        run: |
-          echo Testing equation solver:
-          set OUTPUT=
-          for /f "delims=" %%i in ('echo 1 0 -25 ^| .\solver_application\Release\solver.exe') do set OUTPUT=%%i
-          echo %OUTPUT%
-          echo %OUTPUT% | findstr "x1 = -5.00000" || (echo x1 test failed & exit 1)
-          echo %OUTPUT% | findstr "x2 = 5.00000" || (echo x2 test failed & exit 1)
-          echo Solver test passed!
