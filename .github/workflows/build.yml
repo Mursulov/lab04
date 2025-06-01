@@ -74,11 +74,13 @@ jobs:
         run: cmake --build . --config ${{ env.BUILD_TYPE }} -- /p:Platform=x64
       - name: Run Hello World Test
         working-directory: ./build
+        shell: cmd
         run: |
           .\hello_world_application\Release\hello_world.exe | findstr "hello, world!"
           echo Hello World test passed!
       - name: Run Solver Test
         working-directory: ./build
+        shell: cmd
         run: |
           echo Testing equation solver:
           set OUTPUT=
