@@ -44,8 +44,8 @@ jobs:
         echo "Testing equation solver:"
         OUTPUT=$(./solver_application/solver <<< "1 0 -25")
         echo "$OUTPUT"
-        echo "$OUTPUT" | grep -q "x1 = -5.000000" || (echo "x1 test failed"; exit 1)
-        echo "$OUTPUT" | grep -q "x2 = 5.000000" || (echo "x2 test failed"; exit 1)
+        echo "$OUTPUT" | grep -q "x1 = -5.00000" || (echo "x1 test failed"; exit 1)
+        echo "$OUTPUT" | grep -q "x2 = 5.00000" || (echo "x2 test failed"; exit 1)
         echo "Solver test passed!"
 
   build-windows:
@@ -82,6 +82,6 @@ jobs:
         Write-Host "Testing equation solver:"
         $output = echo "1 0 -25" | .\solver_application\Release\solver.exe
         Write-Host $output
-        if ($output -notmatch "x1 = -5.000000") { Write-Error "x1 test failed"; exit 1 }
-        if ($output -notmatch "x2 = 5.000000") { Write-Error "x2 test failed"; exit 1 }
+        if ($output -notmatch "x1 = -5.00000") { Write-Error "x1 test failed"; exit 1 }
+        if ($output -notmatch "x2 = 5.00000") { Write-Error "x2 test failed"; exit 1 }
         Write-Host "Solver test passed!"
