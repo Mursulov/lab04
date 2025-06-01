@@ -12,6 +12,11 @@ int main()
     float c = 0;
 
     std::cin >> a >> b >> c;
+    // Пропускаем некорректный ввод (например, пустую строку)
+    if (!std::cin) {
+        formatter(std::cout, "error: invalid input");
+        return 1;
+    }
 
     float x1 = 0;
     float x2 = 0;
