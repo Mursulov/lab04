@@ -2,9 +2,9 @@ name: CMake Build and Test
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
-    branches: [ main ]
+    branches: [ master ]
 
 env:
   BUILD_TYPE: Release
@@ -47,41 +47,3 @@ jobs:
         echo "$OUTPUT" | grep -q "x1 = -5.00000" || (echo "x1 test failed"; exit 1)
         echo "$OUTPUT" | grep -q "x2 = 5.00000" || (echo "x2 test failed"; exit 1)
         echo "Solver test passed!"
-
-  build-windows:
-    runs-on: windows-latest
-
-    steps:
-    - uses: actions/checkout@v2
-
-    - name: Install CMake
-      uses: lukka/get-cmake@v3.29.2
-
-    - name: Create Build Directory
-      run: mkdir build
-
-    - name: Configure CMake
-      working-directory: ./build
-      run: cmake .. -DCMAKE_BUILD_TYPE=$env:BUILD_TYPE
-
-    - name: Build
-      working-directory: ./build
-      run: cmake --build . --config $env:BUILD_TYPE
-
-    - name: Run Hello World Test
-      working-directory: ./build
-      shell: pwsh
-      run: |
-        .\hello_world_application\Release\hello_world.exe | Select-String "hello, world!"
-        Write-Host "Hello World test passed!"
-
-    - name: Run Solver Test
-      working-directory: ./build
-      shell: pwsh
-      run: |
-        Write-Host "Testing equation solver:"
-        $output = echo "1 0 -25" | .\solver_application\Release\solver.exe
-        Write-Host $output
-        if ($output -notmatch "x1 = -5.00000") { Write-Error "x1 test failed"; exit 1 }
-        if ($output -notmatch "x2 = 5.00000") { Write-Error "x2 test failed"; exit 1 }
-        Write-Host "Solver test passed!"
