@@ -1,5 +1,7 @@
-#include <iostream>
 
+#include <iostream>
+#include <iomanip>
+#include <sstream>
 #include "formatter_ex.h"
 #include "solver.h"
 
