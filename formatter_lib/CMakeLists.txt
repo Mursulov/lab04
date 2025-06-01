@@ -1,6 +1,12 @@
-cmake_minimum_required(VERSION 3.29.2)
-project(formatter)
-set(CMAKE_CXX_STANDARD 20)
-set(CMAKE_CXX_STANDARD_REQUIRED ON)
-add_library(formatter STATIC ${CMAKE_CURRENT_SOURCE_DIR}/formatter.cpp)
-include_directories(${CMAKE_CURRENT_SOURCE_DIR})
+cmake_minimum_required(VERSION 3.5)
+
+# Указываем, что это подпроект
+project(formatter LANGUAGES CXX VERSION 1.0)
+
+# Проверяем, не был ли target уже добавлен
+if(NOT TARGET formatter)
+    add_library(formatter STATIC formatter.cpp)
+    target_include_directories(formatter PUBLIC 
+        $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+    )
+endif()

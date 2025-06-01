@@ -1,13 +1,12 @@
-# Игнорировать служебные файлы macOS
-.DS_Store
-._.DS_Store
-
-# Игнорировать временные файлы редакторов
+build/
+*/build/
+*.a
+*.so
+*.o
+*.out
+*.exe
+*~
 *.swp
-*.swo
-*.log
-*.tmp
-
-# Игнорировать папки (если нужно)
-node_modules/
-.env
+.DS_Store
+.vscode/
+.idea/
