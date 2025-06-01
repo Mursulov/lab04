@@ -20,7 +20,6 @@ jobs:
       run: |
         sudo apt-get update
         sudo apt-get install -y build-essential cmake
-
     - name: Create Build Directory
       run: mkdir -p build
 
@@ -37,7 +36,6 @@ jobs:
       run: |
         ./hello_world_application/hello_world | grep -q "hello, world!"
         echo "Hello World test passed!"
-
     - name: Run Solver Test
       working-directory: ./build
       run: |
@@ -47,3 +45,50 @@ jobs:
         echo "$OUTPUT" | grep -q "x1 = -5.00000" || (echo "x1 test failed"; exit 1)
         echo "$OUTPUT" | grep -q "x2 = 5.00000" || (echo "x2 test failed"; exit 1)
         echo "Solver test passed!"
+
+  build-windows:
+    runs-on: windows-latest
+
+    env:
+      BUILD_TYPE: Release
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v2
+
+    - name: Install CMake
+      uses: lukka/get-cmake@v3.28.3
+
+    - name: Create Build Directory
+      run: mkdir build
+
+    - name: Configure CMake
+      working-directory: ./build
+      run: cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=%BUILD_TYPE%
+
+    - name: Build
+      working-directory: ./build
+      run: cmake --build . --config %BUILD_TYPE%
+
+    - name: Run Hello World Test
+      working-directory: ./build
+      shell: pwsh
+      run: |
+        $exe = ".\hello_world_application\${{ env.BUILD_TYPE }}\hello_world.exe"
+        $output = & $exe
+        if ($output -notmatch "hello, world!") { Write-Host "Hello World test failed"; exit 1 }
+        Write-Host "Hello World test passed!"
+
+    - name: Run Solver Test
+      working-directory: ./build
+      shell: pwsh
+      run: |
+        Write-Host "Testing equation solver:"
+        $exe = ".\solver_application\${{ env.BUILD_TYPE }}\solver.exe"
+        $output = echo "1 0 -25" | & $exe
+        Write-Host $output
+        if ($output -notmatch "x1 = -5.00000") { Write-Host "x1 test failed"; exit 1 }
+        if ($output -notmatch "x2 = 5.00000") { Write-Host "x2 test failed"; exit 1 }
+        Write-Host "Solver test passed!"
