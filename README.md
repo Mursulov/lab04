@@ -1,0 +1,128 @@
+## Изменение 
+Было внесено изменение в файл buil.yml для сборки с clang (win)
+
+    name: CMake Build and Test
+    
+    on:
+      push:
+        branches: [ main ]
+      pull_request:
+        branches: [ main ]
+    
+    env:
+      BUILD_TYPE: Release
+    
+    jobs:
+      build:
+        runs-on: ubuntu-latest
+        
+        steps:
+        - uses: actions/checkout@v2
+    
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y build-essential cmake
+    
+        - name: Create Build Directory
+          run: mkdir -p build
+    
+        - name: Configure CMake
+          working-directory: ./build
+          run: cmake .. -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+    
+        - name: Build
+          working-directory: ./build
+          run: cmake --build . --config ${{ env.BUILD_TYPE }}
+    
+        - name: List build/hello_world_application contents
+          run: ls -l ./hello_world_application || ls -l ./build/hello_world_application || true
+    
+        - name: List build/solver_application contents
+          run: ls -l ./solver_application || ls -l ./build/solver_application || true
+    
+        - name: Run Hello World Test
+          run: |
+            ./build/hello_world_application/hello_world | grep -q "hello, world!"
+            echo "Hello World test passed!"
+    
+        - name: Run Solver Test
+          run: |
+            echo "Testing equation solver:"
+            OUTPUT=$(./build/solver_application/solver <<< "1 0 -25")
+            echo "$OUTPUT"
+            echo "$OUTPUT" | grep -q "x1 = -5.00000" || (echo "x1 test failed"; exit 1)
+            echo "$OUTPUT" | grep -q "x2 = 5.00000" || (echo "x2 test failed"; exit 1)
+            echo "Solver test passed!"
+    
+      build-clang:
+        runs-on: ubuntu-latest
+    
+        steps:
+        - uses: actions/checkout@v2
+    
+        - name: Install dependencies
+          run: |
+            sudo apt-get update
+            sudo apt-get install -y clang cmake build-essential
+    
+        - name: Create Build Directory
+          run: mkdir -p build
+    
+        - name: Configure CMake with clang
+          working-directory: ./build
+          env:
+            CC: clang
+            CXX: clang++
+          run: cmake .. -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }} -DCMAKE_C_COMPILER=clang -DCMAKE_CXX_COMPILER=clang++
+    
+        - name: Build with clang
+          working-directory: ./build
+          run: cmake --build . --config ${{ env.BUILD_TYPE }}
+    
+        - name: List build/hello_world_application contents
+          run: ls -l ./hello_world_application || ls -l ./build/hello_world_application || true
+    
+        - name: List build/solver_application contents
+          run: ls -l ./solver_application || ls -l ./build/solver_application || true
+    
+        - name: Run Hello World Test (clang)
+          run: |
+            ./build/hello_world_application/hello_world | grep -q "hello, world!"
+            echo "Hello World test passed!"
+    
+        - name: Run Solver Test (clang)
+          run: |
+            echo "Testing equation solver:"
+            OUTPUT=$(./build/solver_application/solver <<< "1 0 -25")
+            echo "$OUTPUT"
+            echo "$OUTPUT" | grep -q "x1 = -5.00000" || (echo "x1 test failed"; exit 1)
+            echo "$OUTPUT" | grep -q "x2 = 5.00000" || (echo "x2 test failed"; exit 1)
+            echo "Solver test passed!"
+    
+      build-windows:
+        runs-on: windows-latest
+        env:
+          BUILD_TYPE: Release
+        steps:
+          - uses: actions/checkout@v2
+          - name: Install dependencies
+            run: choco install cmake --installargs 'ADD_CMAKE_TO_PATH=System' --yes
+          - name: Create Build Directory
+            run: mkdir build
+    
+          - name: Configure CMake
+            working-directory: ./build
+            shell: cmd
+            run: cmake .. -G "Visual Studio 17 2022" -A x64 -DCMAKE_BUILD_TYPE=${{ env.BUILD_TYPE }}
+    
+          - name: Build
+            working-directory: ./build
+            shell: cmd
+            run: cmake --build . --config ${{ env.BUILD_TYPE }} -- /p:Platform=x64
+          - name: Run Hello World Test
+            working-directory: ./build
+            shell: cmd
+            run: |
+              .\hello_world_application\Release\hello_world.exe | findstr "hello, world!"
+              echo Hello World test passed!
